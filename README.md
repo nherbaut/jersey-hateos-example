@@ -5,6 +5,7 @@ Jersey 2 project which show an example of hateos hyperlinking
 # example
 
 ````
+mvn clean package exec:java
 curl http://localhost:8080/myapp/boxes
 ````
 

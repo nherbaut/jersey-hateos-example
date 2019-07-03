@@ -9,6 +9,8 @@ import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import fr.labri.utils.ExceptionMapper;
+
 /**
  * Main class.
  *
@@ -29,8 +31,9 @@ public class Main {
 		// in com.mirlitone package
 
 		final ResourceConfig rc = new ResourceConfig()
-				.packages("fr.labri.endpoints").register(
-						DeclarativeLinkingFeature.class);
+				.packages("fr.labri.endpoints")
+				.register(DeclarativeLinkingFeature.class)
+				.register(ExceptionMapper.class);
 
 		// create and start a new instance of grizzly http server
 		// exposing the Jersey application at BASE_URI

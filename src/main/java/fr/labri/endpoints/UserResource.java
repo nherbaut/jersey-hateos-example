@@ -23,8 +23,8 @@ import fr.labri.utils.Utils;
 public class UserResource {
 
 	/**
-	 * Method handling HTTP GET requests. The returned object will be sent to
-	 * the client as "text/plain" media type.
+	 * Method handling HTTP GET requests. The returned object will be sent to the
+	 * client as "text/plain" media type.
 	 *
 	 * @return String that will be returned as a text/plain response.
 	 */
@@ -52,6 +52,14 @@ public class UserResource {
 
 		return Arrays.asList(u, u1);
 
+	}
+
+	@POST
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, })
+	public Response createUser(User u) {
+
+		
+		return Response.ok().build();
 	}
 
 }

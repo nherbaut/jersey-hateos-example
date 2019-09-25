@@ -7,9 +7,12 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.utilities.Binder;
 import org.glassfish.hk2.utilities.BuilderHelper;
-import org.glassfish.hk2.utilities.DescriptorImpl;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
+import org.glassfish.jersey.moxy.internal.MoxyFilteringFeature;
+import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
+import org.glassfish.jersey.moxy.json.internal.MoxyJsonAutoDiscoverable;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -23,7 +26,7 @@ import fr.labri.services.StubMessageHandlerImpl;
  */
 public class Main {
 	// Base URI the Grizzly HTTP server will listen on
-	public static final String BASE_URI = "http://localhost:8080/myapp/";
+	public static final String BASE_URI = "http://localhost:8080/api";
 
 	/**
 	 * Starts Grizzly HTTP server exposing JAX-RS resources defined in this
@@ -36,8 +39,12 @@ public class Main {
 		// providers
 		// in com.mirlitone package
 
-		final ResourceConfig rc = new ResourceConfig().packages("fr.labri.endpoints")
-				.register(DeclarativeLinkingFeature.class).register(ExceptionMapper.class)
+		final ResourceConfig rc = new ResourceConfig()
+				.packages("fr.labri.endpoints")//
+				.register(JacksonFeature.class)
+				
+				.register(DeclarativeLinkingFeature.class)//
+				.register(ExceptionMapper.class)//
 				.registerInstances(new Binder() {
 
 					@Override
@@ -51,6 +58,8 @@ public class Main {
 
 					}
 				});
+		
+		
 
 		// create and start a new instance of grizzly http server
 		// exposing the Jersey application at BASE_URI

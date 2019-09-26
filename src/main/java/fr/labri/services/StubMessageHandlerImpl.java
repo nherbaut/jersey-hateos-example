@@ -7,29 +7,30 @@ import fr.labri.model.StubMessage;
 
 public class StubMessageHandlerImpl implements StubMessageHandler {
 
-//	@Inject
-//	@Named("processing")
-	StubMessageHandler processingHandler=new DummyStubMessageHandler();
+	@Inject
+	@Named("processing")
+	StubMessageHandler processingHandler;
 
-//	@Inject
-//	@Named("save")
-	StubMessageHandler saveHandler=new DummyStubMessageHandler();
+	@Inject
+	@Named("save")
+	StubMessageHandler saveHandler;
 
-//	@Inject
-//	@Named("load")
-	StubMessageHandler loadHandler=new DummyStubMessageHandler();
+	@Inject
+	@Named("load")
+	StubMessageHandler loadHandler;
 
-//	@Inject
-//	@Named("nextHop")
-	StubMessageHandler nextHopHandler=new RestClientStubMessageHandler();
+	@Inject
+	@Named("parallel")
+	StubMessageHandler nextHopHandler;
 
 	@Override
 	public void handleStubMessage(StubMessage message) {
 		processingHandler.handleStubMessage(message);
 		saveHandler.handleStubMessage(message);
 		loadHandler.handleStubMessage(message);
+		nextHopHandler.handleStubMessage(message);
 
-		message.getNextMessages().parallelStream().forEach(s -> nextHopHandler.handleStubMessage(s));
+		
 
 	}
 

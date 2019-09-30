@@ -8,43 +8,55 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@JsonIgnoreProperties
 public class StubMessage {
 
-	
-	private String nextHop;
-	private StubMessagePayload payload;
-	private List<StubMessage> nextMessages=Collections.EMPTY_LIST;
-
-	
-	@Override
-	public String toString() {
-		return "StubMessage [nextHop=" + nextHop + ", payload=" + payload + ", nextMessages=" + nextMessages + "]";
+	public boolean isDirected() {
+		return directed;
 	}
 
-	public String getNextHop() {
-		return nextHop;
+	public void setDirected(boolean directed) {
+		this.directed = directed;
 	}
 
-	public void setNextHop(String nextHop) {
-		this.nextHop = nextHop;
+	public boolean isMultigraph() {
+		return multigraph;
 	}
 
-	public StubMessagePayload getPayload() {
-		return payload;
+	public void setMultigraph(boolean multigraph) {
+		this.multigraph = multigraph;
 	}
 
-	public void setPayload(StubMessagePayload payload) {
-		this.payload = payload;
+	public Link[] getLinks() {
+		return links;
 	}
 
-	public List<StubMessage> getNextMessages() {
-		return nextMessages;
+	public void setLinks(Link[] links) {
+		this.links = links;
 	}
 
-	public void setNextMessages(List<StubMessage> nextMessages) {
-		this.nextMessages = nextMessages;
+	public Node[] getNodes() {
+		return nodes;
 	}
 
+	public void setNodes(Node[] nodes) {
+		this.nodes = nodes;
+	}
+
+	private boolean directed;
+	private boolean multigraph;
+	private Link[] links;
+	private Node[] nodes;
+	private Object graph;
+
+	public Object getGraph() {
+		return graph;
+	}
+
+	public void setGraph(Object graph) {
+		this.graph = graph;
+	}
 }

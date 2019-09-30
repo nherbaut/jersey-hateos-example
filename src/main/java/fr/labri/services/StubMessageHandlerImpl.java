@@ -5,7 +5,7 @@ import javax.inject.Named;
 
 import fr.labri.model.StubMessage;
 
-public class StubMessageHandlerImpl implements StubMessageHandler {
+public class StubMessageHandlerImpl extends StubMessageHandler {
 
 	@Inject
 	@Named("processing")
@@ -24,13 +24,11 @@ public class StubMessageHandlerImpl implements StubMessageHandler {
 	StubMessageHandler nextHopHandler;
 
 	@Override
-	public void handleStubMessage(StubMessage message) {
-		processingHandler.handleStubMessage(message);
-		saveHandler.handleStubMessage(message);
-		loadHandler.handleStubMessage(message);
-		nextHopHandler.handleStubMessage(message);
-
-		
+	public void handleStubMessage(StubMessage message, String myIdentity) {
+		processingHandler.handleStubMessage(message, myIdentity);
+		saveHandler.handleStubMessage(message, myIdentity);
+		loadHandler.handleStubMessage(message, myIdentity);
+		nextHopHandler.handleStubMessage(message, myIdentity);
 
 	}
 

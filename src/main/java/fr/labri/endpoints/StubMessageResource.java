@@ -1,22 +1,27 @@
 package fr.labri.endpoints;
 
-import java.util.Arrays;
-
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.labri.model.Link;
+
+import fr.labri.model.Node;
+import fr.labri.model.Payload;
 import fr.labri.model.StubMessage;
-import fr.labri.model.StubMessagePayload;
+
 import fr.labri.services.StubMessageHandler;
 
 @Path("/")
@@ -28,6 +33,10 @@ public class StubMessageResource {
 	@Named("composite")
 	StubMessageHandler handler;
 
+	@Inject
+	@Named("nodeIdentifier")
+	String nodeIdentifier;
+
 	@POST
 	@Consumes(value = MediaType.APPLICATION_JSON)
 	public Response welcome(StubMessage message) {
@@ -36,20 +45,39 @@ public class StubMessageResource {
 
 	}
 
+	@Path("/{identity}")
+	@POST()
+	@Consumes(value = MediaType.APPLICATION_JSON)
+	public Response welcome(StubMessage message, @PathParam("identity") String id) {
+		handler.handleStubMessage(message, id);
+		return Response.ok().build();
+
+	}
+
 	@GET
 	@Produces(value = MediaType.APPLICATION_JSON)
 	public StubMessage dummy() {
+		LOGGER.debug("I am {}", nodeIdentifier);
 		StubMessage mess = new StubMessage();
-		mess.setNextHop("nexthop");
-		StubMessagePayload payload = new StubMessagePayload();
-		payload.setInstructions(1000);
-		payload.setLoadedByteCount(9999);
-		payload.setSavedByteCount(8888);
-		mess.setPayload(payload);
+		mess.setDirected(false);
+		mess.setMultigraph(false);
+		Link l = new Link();
+		l.setSource("source");
+		l.setTarget("target");
+		mess.setLinks(new Link[] { l, l, l });
 
-		StubMessage mess2 = new StubMessage();
-		mess2.setNextHop("nexthop2");
-		mess.setNextMessages(Arrays.asList(mess2));
+		Node n = new Node();
+		n.setId("id");
+		n.setType("type");
+		Payload payload = new Payload();
+		payload.setDummyPaddings(0);
+		payload.setInByteCount(1);
+		payload.setInstructions(2);
+		payload.setOutByteCount(3);
+		n.setPayload(payload);
+
+		mess.setNodes(new Node[] { n, n, n });
+
 		return mess;
 	}
 

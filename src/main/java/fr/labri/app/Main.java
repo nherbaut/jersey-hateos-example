@@ -2,11 +2,13 @@ package fr.labri.app;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Scanner;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.utilities.Binder;
 import org.glassfish.hk2.utilities.BuilderHelper;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
@@ -29,7 +31,7 @@ import fr.labri.services.StubMessageHandlerImpl;
  */
 public class Main {
 	// Base URI the Grizzly HTTP server will listen on
-	public static final String BASE_URI = "http://localhost:8080";
+	public static final String BASE_URI = "http://0.0.0.0:8080";
 
 	/**
 	 * Starts Grizzly HTTP server exposing JAX-RS resources defined in this
@@ -37,33 +39,44 @@ public class Main {
 	 * 
 	 * @return Grizzly HTTP server.
 	 */
-	public static HttpServer startServer() {
+	public static HttpServer startServer(String nodeIdentifier) {
 		// create a resource config that scans for JAX-RS resources and
 		// providers
 		// in com.mirlitone package
 
-		final ResourceConfig rc = new ResourceConfig()
-				.packages("fr.labri.endpoints")//
-				.register(JacksonFeature.class)
-				
+		final ResourceConfig rc = new ResourceConfig().packages("fr.labri.endpoints")//
+				.property("nodeIdentifier", nodeIdentifier)//
+				.register(JacksonFeature.class)//
 				.register(DeclarativeLinkingFeature.class)//
 				.register(ExceptionMapper.class)//
 				.register(new Binder() {
 
 					@Override
 					public void bind(DynamicConfiguration config) {
-						
-						config.bind(BuilderHelper.link(StubMessageHandlerImpl.class).named("composite").to(StubMessageHandler.class).build());
-						config.bind(BuilderHelper.link(DummyStubMessageHandler.class).named("processing").to(StubMessageHandler.class).build());
-						config.bind(BuilderHelper.link(DummyStubMessageHandler.class).named("save").to(StubMessageHandler.class).build());
-						config.bind(BuilderHelper.link(DummyStubMessageHandler.class).named("load").to(StubMessageHandler.class).build());
-						config.bind(BuilderHelper.link(ParallelStubMessageHandler.class).named("parallel").to(StubMessageHandler.class).build());//
-						config.bind(BuilderHelper.link(RestClientStubMessageHandler.class).named("nextHop").to(StubMessageHandler.class).build());//
+
+						config.bind(BuilderHelper.link(StubMessageHandlerImpl.class).named("composite")
+								.to(StubMessageHandler.class).build());
+						config.bind(BuilderHelper.link(DummyStubMessageHandler.class).named("processing")
+								.to(StubMessageHandler.class).build());
+						config.bind(BuilderHelper.link(DummyStubMessageHandler.class).named("save")
+								.to(StubMessageHandler.class).build());
+						config.bind(BuilderHelper.link(DummyStubMessageHandler.class).named("load")
+								.to(StubMessageHandler.class).build());
+						config.bind(BuilderHelper.link(ParallelStubMessageHandler.class).named("parallel")
+								.to(StubMessageHandler.class).build());//
+						config.bind(BuilderHelper.link(RestClientStubMessageHandler.class).named("nextHop")
+								.to(StubMessageHandler.class).build());//
+
+					}
+				})//
+				.register(new AbstractBinder() {
+
+					@Override
+					protected void configure() {
+						bind(nodeIdentifier).to(String.class).named("nodeIdentifier");
 
 					}
 				});
-		
-		
 
 		return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
 	}
@@ -77,11 +90,19 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		SLF4JBridgeHandler.removeHandlersForRootLogger();
 		SLF4JBridgeHandler.install();
-		final HttpServer server = startServer();
+		final HttpServer server = startServer(args[0]);
+
 		System.out.println(String.format(
-				"Jersey app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...",
+				"Jersey app started with WADL available at " + "%sapplication.wadl\nType Stop and enter to stop it...",
 				BASE_URI));
-		System.in.read();
-		server.stop();
+		Scanner scanner = new Scanner(System.in);
+
+		while (true) {
+			String command = scanner.nextLine();
+			if ("stop".equals(command)) {
+				server.stop();
+				break;
+			}
+		}
 	}
 }

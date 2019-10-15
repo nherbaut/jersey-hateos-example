@@ -1,0 +1,47 @@
+version: "3"
+services:
+  A:
+    image: nherbaut/smart-ms-stub
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "8080:8080"
+    networks:
+      - webnet
+  B:
+    image: nherbaut/smart-ms-stub
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "8081:8080"
+    networks:
+      - webnet
+  C:
+    image: nherbaut/smart-ms-stub
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "8082:8080"
+    networks:
+      - webnet
+networks:
+  webnet:
+

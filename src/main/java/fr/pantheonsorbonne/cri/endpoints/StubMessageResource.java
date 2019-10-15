@@ -1,4 +1,4 @@
-package fr.labri.endpoints;
+package fr.pantheonsorbonne.cri.endpoints;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,13 +16,11 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.labri.model.Link;
-
-import fr.labri.model.Node;
-import fr.labri.model.Payload;
-import fr.labri.model.StubMessage;
-
-import fr.labri.services.StubMessageHandler;
+import fr.pantheonsorbonne.cri.model.Link;
+import fr.pantheonsorbonne.cri.model.Node;
+import fr.pantheonsorbonne.cri.model.Payload;
+import fr.pantheonsorbonne.cri.model.StubMessage;
+import fr.pantheonsorbonne.cri.services.StubMessageHandler;
 
 @Path("/")
 public class StubMessageResource {

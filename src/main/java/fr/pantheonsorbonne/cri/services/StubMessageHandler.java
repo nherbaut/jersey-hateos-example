@@ -1,4 +1,4 @@
-package fr.labri.services;
+package fr.pantheonsorbonne.cri.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import fr.labri.model.Node;
-import fr.labri.model.StubMessage;
+import fr.pantheonsorbonne.cri.model.Node;
+import fr.pantheonsorbonne.cri.model.StubMessage;
 
 public abstract class StubMessageHandler {
 

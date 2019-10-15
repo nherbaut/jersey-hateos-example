@@ -1,9 +1,9 @@
-package fr.labri.services;
+package fr.pantheonsorbonne.cri.services;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import fr.labri.model.StubMessage;
+import fr.pantheonsorbonne.cri.model.StubMessage;
 
 public class StubMessageHandlerImpl extends StubMessageHandler {
 

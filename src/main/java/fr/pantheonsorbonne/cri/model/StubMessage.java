@@ -1,4 +1,4 @@
-package fr.labri.model;
+package fr.pantheonsorbonne.cri.model;
 
 import java.util.Collections;
 import java.util.List;

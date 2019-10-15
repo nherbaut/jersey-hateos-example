@@ -1,4 +1,4 @@
-package fr.labri.model;
+package fr.pantheonsorbonne.cri.model;
 
 public class Link {
 	private String source;

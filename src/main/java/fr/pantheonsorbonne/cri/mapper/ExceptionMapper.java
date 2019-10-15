@@ -1,4 +1,4 @@
-package fr.labri.mapper;
+package fr.pantheonsorbonne.cri.mapper;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;

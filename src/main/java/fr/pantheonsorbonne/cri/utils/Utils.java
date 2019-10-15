@@ -1,4 +1,4 @@
-package fr.labri.utils;
+package fr.pantheonsorbonne.cri.utils;
 
 import java.util.Random;
 

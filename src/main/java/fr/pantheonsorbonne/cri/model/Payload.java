@@ -1,4 +1,4 @@
-package fr.labri.model;
+package fr.pantheonsorbonne.cri.model;
 
 import javax.xml.bind.annotation.XmlAttribute;
 

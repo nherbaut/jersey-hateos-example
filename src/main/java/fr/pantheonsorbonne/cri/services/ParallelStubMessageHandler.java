@@ -1,4 +1,4 @@
-package fr.labri.services;
+package fr.pantheonsorbonne.cri.services;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -6,7 +6,7 @@ import javax.inject.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.labri.model.StubMessage;
+import fr.pantheonsorbonne.cri.model.StubMessage;
 
 public class ParallelStubMessageHandler extends StubMessageHandler {
 

@@ -1,4 +1,4 @@
-package fr.labri.app;
+package fr.pantheonsorbonne.cri.app;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,12 +18,12 @@ import org.glassfish.jersey.moxy.json.internal.MoxyJsonAutoDiscoverable;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import fr.labri.mapper.ExceptionMapper;
-import fr.labri.services.DummyStubMessageHandler;
-import fr.labri.services.ParallelStubMessageHandler;
-import fr.labri.services.RestClientStubMessageHandler;
-import fr.labri.services.StubMessageHandler;
-import fr.labri.services.StubMessageHandlerImpl;
+import fr.pantheonsorbonne.cri.mapper.ExceptionMapper;
+import fr.pantheonsorbonne.cri.services.DummyStubMessageHandler;
+import fr.pantheonsorbonne.cri.services.ParallelStubMessageHandler;
+import fr.pantheonsorbonne.cri.services.RestClientStubMessageHandler;
+import fr.pantheonsorbonne.cri.services.StubMessageHandler;
+import fr.pantheonsorbonne.cri.services.StubMessageHandlerImpl;
 
 /**
  * Main class.

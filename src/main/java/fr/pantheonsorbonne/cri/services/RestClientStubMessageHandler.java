@@ -1,4 +1,4 @@
-package fr.labri.services;
+package fr.pantheonsorbonne.cri.services;
 
 import java.net.URI;
 
@@ -14,8 +14,8 @@ import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.labri.model.Node;
-import fr.labri.model.StubMessage;
+import fr.pantheonsorbonne.cri.model.Node;
+import fr.pantheonsorbonne.cri.model.StubMessage;
 
 public class RestClientStubMessageHandler extends StubMessageHandler {
 

@@ -6,9 +6,13 @@ from lxml import etree
 import copy
 import networkx as nx
 import re
+import os
 
-#IP="10.103.239.199"
-IP="localhost"
+
+IP=os.environ.get("IP",None)
+if IP is None:
+    print("please specify env var IP")
+    exit(-1)
 
 class Payload:
     def __init__(self, instructions=0, in_bytes_count=0, out_bytes_count=0, dummy_padding=0):

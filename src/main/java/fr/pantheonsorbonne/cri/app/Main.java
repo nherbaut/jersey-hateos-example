@@ -44,7 +44,7 @@ public class Main {
 		// providers
 		// in com.mirlitone package
 
-		final ResourceConfig rc = new ResourceConfig().packages("fr.labri.endpoints")//
+		final ResourceConfig rc = new ResourceConfig().packages("fr.pantheonsorbonne.cri")//
 				.property("nodeIdentifier", nodeIdentifier)//
 				.register(JacksonFeature.class)//
 				.register(DeclarativeLinkingFeature.class)//
@@ -90,7 +90,8 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		SLF4JBridgeHandler.removeHandlersForRootLogger();
 		SLF4JBridgeHandler.install();
-		final HttpServer server = startServer(args[0]);
+		String name = args.length > 0 ? args[0] : "dummy";
+		final HttpServer server = startServer(name);
 
 		System.out.println(String.format(
 				"Jersey app started with WADL available at " + "%sapplication.wadl\nType Stop and enter to stop it...",

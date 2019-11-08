@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>project-ear</artifactId>
+		<groupId>fr.pantheonsorbonne.ufr27.miage</groupId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>project-ear-ear</artifactId>
+	<packaging>ear</packaging>
+
+	<name>project-ear EAR module</name>
+
+	<dependencies>
+
+		<!-- Depend on the ejb module and war so that we can package them -->
+		<dependency>
+			<groupId>fr.pantheonsorbonne.ufr27.miage</groupId>
+			<artifactId>project-ear-web</artifactId>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>fr.pantheonsorbonne.ufr27.miage</groupId>
+			<artifactId>project-ear-ejb</artifactId>
+			<type>ejb</type>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>project-ear</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ear-plugin</artifactId>
+				<version>3.0.1</version>
+				<configuration>
+
+					<version>8</version>
+					<defaultLibBundleDir>/lib</defaultLibBundleDir>
+					<modules>
+					
+						<ejbModule>
+							<groupId>fr.pantheonsorbonne.ufr27.miage</groupId>
+							<artifactId>project-ear-ejb</artifactId>
+							<bundleDir>/</bundleDir>
+						</ejbModule>
+						<webModule>
+
+							<groupId>fr.pantheonsorbonne.ufr27.miage</groupId>
+							<artifactId>project-ear-web</artifactId>
+							<bundleDir>/</bundleDir>
+						</webModule>
+					</modules>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>

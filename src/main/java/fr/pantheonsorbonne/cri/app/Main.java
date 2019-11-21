@@ -23,7 +23,7 @@ import fr.pantheonsorbonne.cri.services.DummyStubMessageHandler;
 import fr.pantheonsorbonne.cri.services.ParallelStubMessageHandler;
 import fr.pantheonsorbonne.cri.services.RestClientStubMessageHandler;
 import fr.pantheonsorbonne.cri.services.StubMessageHandler;
-import fr.pantheonsorbonne.cri.services.StubMessageHandlerImpl;
+import fr.pantheonsorbonne.cri.services.CompositeStubMessageHandler;
 
 /**
  * Main class.
@@ -54,7 +54,7 @@ public class Main {
 					@Override
 					public void bind(DynamicConfiguration config) {
 
-						config.bind(BuilderHelper.link(StubMessageHandlerImpl.class).named("composite")
+						config.bind(BuilderHelper.link(CompositeStubMessageHandler.class).named("composite")
 								.to(StubMessageHandler.class).build());
 						config.bind(BuilderHelper.link(DummyStubMessageHandler.class).named("processing")
 								.to(StubMessageHandler.class).build());

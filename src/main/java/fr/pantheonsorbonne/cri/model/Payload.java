@@ -4,14 +4,22 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 import com.google.common.annotations.GwtCompatible;
 
-
 public class Payload {
+
+	@Override
+	public String toString() {
+		return "Payload [instructions=" + instructions + ", inByteCount=" + inByteCount + ", outByteCount="
+				+ outByteCount + ", dummyPaddings=" + dummyPaddings + "]";
+	}
 
 	private long instructions;
 
 	private long inByteCount;
 	private long outByteCount;
 	private long dummyPaddings;
+	
+	
+	public final static Payload EMPTY = new Payload();
 
 	@XmlAttribute(name = "instructions")
 	public long getInstructions() {
@@ -47,6 +55,19 @@ public class Payload {
 
 	public void setDummyPaddings(long dummyPaddings) {
 		this.dummyPaddings = dummyPaddings;
+	}
+
+	public Payload add(Payload p1) {
+		return Payload.add(this, p1);
+	}
+
+	public static Payload add(Payload p1, Payload p2) {
+		Payload p = new Payload();
+		p.setDummyPaddings(p1.getDummyPaddings() + p2.getDummyPaddings());
+		p.setInByteCount(p1.getInByteCount() + p1.getInByteCount());
+		p.setInstructions(p1.getInstructions() + p2.getInstructions());
+		p.setOutByteCount(p1.getOutByteCount() + p2.getOutByteCount());
+		return p;
 	}
 
 }

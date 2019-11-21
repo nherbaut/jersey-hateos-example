@@ -10,7 +10,10 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import fr.pantheonsorbonne.cri.model.ExecutionTrace;
+import fr.pantheonsorbonne.cri.model.Link;
 import fr.pantheonsorbonne.cri.model.Node;
+import fr.pantheonsorbonne.cri.model.Payload;
 import fr.pantheonsorbonne.cri.model.StubMessage;
 
 public abstract class StubMessageHandler {
@@ -47,15 +50,11 @@ public abstract class StubMessageHandler {
 
 	}
 
-	private Collection<Node> getOutgoingNodes(StubMessage message) {
-		return this.getOutgoingNodesSkippingGateways(message, this.nodeIdentifier);
-
-	}
-
 	protected Collection<Node> getOutgoingNodes(StubMessage message, String nodeIdentifier) {
 		return Arrays.stream(message.getLinks())//
 				.filter(l -> l.getSource().equals(nodeIdentifier))//
-				.map(l -> l.getTarget()).map(s -> Arrays.stream(message.getNodes())//
+				.map(Link::getTarget)//
+				.map(s -> Arrays.stream(message.getNodes())//
 						.filter(n -> n.getId().equals(s))//
 						.findFirst().orElseThrow())
 				.collect(Collectors.toList());
@@ -72,10 +71,10 @@ public abstract class StubMessageHandler {
 
 	}
 
-	public void handleStubMessage(StubMessage message) {
-		this.handleStubMessage(message, this.nodeIdentifier);
+	public ExecutionTrace handleStubMessage(StubMessage message) {
+		return this.handleStubMessage(message, this.nodeIdentifier);
 	}
 
-	public abstract void handleStubMessage(StubMessage message, String myIdentity);
+	public abstract ExecutionTrace handleStubMessage(StubMessage message, String myIdentity);
 
 }

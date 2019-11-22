@@ -1,5 +1,8 @@
 package fr.pantheonsorbonne.cri.endpoints;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -16,61 +19,44 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Streams;
+
+import fr.pantheonsorbonne.cri.model.ContextAutomaton;
 import fr.pantheonsorbonne.cri.model.ExecutionTrace;
 import fr.pantheonsorbonne.cri.model.Link;
 import fr.pantheonsorbonne.cri.model.Node;
 import fr.pantheonsorbonne.cri.model.Payload;
 import fr.pantheonsorbonne.cri.model.StubMessage;
-import fr.pantheonsorbonne.cri.services.StubMessageHandler;
+import fr.pantheonsorbonne.cri.services.StubMessageHandlerImpl;
+import fr.pantheonsorbonne.cri.services.StubMessageHandlerBuilder;
 
 @Path("/")
 public class StubMessageResource {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StubMessageResource.class);
 
-	@Inject
-	@Named("composite")
-	StubMessageHandler handler;
-
-	@Inject
-	@Named("nodeIdentifier")
-	String nodeIdentifier;
-
-	@POST
-	@Consumes(value = MediaType.APPLICATION_JSON)
-	@Produces(value = MediaType.APPLICATION_JSON)
-	public ExecutionTrace welcome(StubMessage message) {
-		return handler.handleStubMessage(message);
-		
-
-	}
-
 	@Path("/{identity}")
 	@POST()
 	@Consumes(value = MediaType.APPLICATION_JSON)
 	public ExecutionTrace welcome(StubMessage message, @PathParam("identity") String id) {
-		
-		ExecutionTrace res = handler.handleStubMessage(message, id);
-		System.out.println(id+" returned " + res);
-		return res;
-		
-		
+		LOGGER.debug("received for {} with context {}", id, message.getContext());
+		return StubMessageHandlerBuilder.of(message, message.getNodeFromId(id)).handleStubMessage();
 
 	}
 
 	@GET
 	@Produces(value = MediaType.APPLICATION_JSON)
 	public StubMessage dummy() throws InterruptedException {
-		
+
 		Thread.sleep(100);
-		LOGGER.debug("I am {}", nodeIdentifier);
+		LOGGER.debug("I am a message");
 		StubMessage mess = new StubMessage();
 		mess.setDirected(false);
 		mess.setMultigraph(false);
 		Link l = new Link();
 		l.setSource("source");
 		l.setTarget("target");
-		mess.setLinks(new Link[] { l, l, l });
+		mess.setLinks(Stream.of(l, l, l).collect(Collectors.toSet()));
 
 		Node n = new Node();
 		n.setId("id");
@@ -82,18 +68,20 @@ public class StubMessageResource {
 		payload.setOutByteCount(3);
 		n.setPayload(payload);
 
-		mess.setNodes(new Node[] { n, n, n });
+		mess.setNodes(Stream.of(n, n, n).collect(Collectors.toSet()));
+
+		mess.setContext(ContextAutomaton.getRandom(3, ContextAutomaton.getRandom(5, null)));
 
 		return mess;
 	}
-	
+
 	@GET
 	@Path("dummy")
 	@Produces(value = MediaType.APPLICATION_JSON)
 	public ExecutionTrace dummy2() throws InterruptedException {
-		
+
 		ExecutionTrace et = new ExecutionTrace();
-		
+
 		et.getNodes().add("toto");
 		et.getNodes().add("titi");
 		et.getPayload().setDummyPaddings(100);

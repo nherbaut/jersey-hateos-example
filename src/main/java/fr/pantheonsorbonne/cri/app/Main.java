@@ -19,11 +19,11 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import fr.pantheonsorbonne.cri.mapper.ExceptionMapper;
-import fr.pantheonsorbonne.cri.services.DummyStubMessageHandler;
+import fr.pantheonsorbonne.cri.services.ProcessingStubMessageHandler;
 import fr.pantheonsorbonne.cri.services.ParallelStubMessageHandler;
 import fr.pantheonsorbonne.cri.services.RestClientStubMessageHandler;
-import fr.pantheonsorbonne.cri.services.StubMessageHandler;
-import fr.pantheonsorbonne.cri.services.CompositeStubMessageHandler;
+import fr.pantheonsorbonne.cri.services.StubMessageHandlerImpl;
+import fr.pantheonsorbonne.cri.services.TaskStubMessageHandler;
 
 /**
  * Main class.
@@ -54,18 +54,18 @@ public class Main {
 					@Override
 					public void bind(DynamicConfiguration config) {
 
-						config.bind(BuilderHelper.link(CompositeStubMessageHandler.class).named("composite")
-								.to(StubMessageHandler.class).build());
-						config.bind(BuilderHelper.link(DummyStubMessageHandler.class).named("processing")
-								.to(StubMessageHandler.class).build());
-						config.bind(BuilderHelper.link(DummyStubMessageHandler.class).named("save")
-								.to(StubMessageHandler.class).build());
-						config.bind(BuilderHelper.link(DummyStubMessageHandler.class).named("load")
-								.to(StubMessageHandler.class).build());
+						config.bind(BuilderHelper.link(TaskStubMessageHandler.class).named("composite")
+								.to(StubMessageHandlerImpl.class).build());
+						config.bind(BuilderHelper.link(ProcessingStubMessageHandler.class).named("processing")
+								.to(StubMessageHandlerImpl.class).build());
+						config.bind(BuilderHelper.link(ProcessingStubMessageHandler.class).named("save")
+								.to(StubMessageHandlerImpl.class).build());
+						config.bind(BuilderHelper.link(ProcessingStubMessageHandler.class).named("load")
+								.to(StubMessageHandlerImpl.class).build());
 						config.bind(BuilderHelper.link(ParallelStubMessageHandler.class).named("parallel")
-								.to(StubMessageHandler.class).build());//
+								.to(StubMessageHandlerImpl.class).build());//
 						config.bind(BuilderHelper.link(RestClientStubMessageHandler.class).named("nextHop")
-								.to(StubMessageHandler.class).build());//
+								.to(StubMessageHandlerImpl.class).build());//
 
 					}
 				})//

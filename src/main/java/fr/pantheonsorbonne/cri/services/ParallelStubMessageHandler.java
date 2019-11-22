@@ -1,6 +1,6 @@
 package fr.pantheonsorbonne.cri.services;
 
-import java.util.function.BinaryOperator;
+import java.util.Collection;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -8,40 +8,38 @@ import javax.inject.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.pantheonsorbonne.cri.model.ContextAutomaton;
 import fr.pantheonsorbonne.cri.model.ExecutionTrace;
 import fr.pantheonsorbonne.cri.model.Node;
 import fr.pantheonsorbonne.cri.model.StubMessage;
 
-public class ParallelStubMessageHandler extends StubMessageHandler {
+public class ParallelStubMessageHandler extends StubMessageHandlerImpl {
+
+	public ParallelStubMessageHandler(StubMessage message, String nodeIdentifier) {
+		super(message, nodeIdentifier);
+
+	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ParallelStubMessageHandler.class);
 
-	@Inject
-	@Named("nextHop")
 	StubMessageHandler nestedHandler;
 
-	@Inject
-	@Named("nodeIdentifier")
-	String nodeIdentifier;
-
 	@Override
-	public ExecutionTrace handleStubMessage(StubMessage message, String myIdentity) {
+	public ExecutionTrace handleStubMessage() {
 
-		
-		return this.getOutgoingNodesSkippingGateways(message, myIdentity).parallelStream()//
-				//.peek(n -> LOGGER.info("{} -> {}", myIdentity, n.getId()))//
-				.map(n -> this.nestedHandler.handleStubMessage(message, n.getId()))//
+		Collection<Node> nextNodes = this.message.next(this.getMyNode());
+		ContextAutomaton randomContext = ContextAutomaton.getRandom(nextNodes.size(), this.message.getContext());
+		this.message.setContext(randomContext);
+		ParallelStubMessageHolder.submitMessageOnHold(message);
+		return nextNodes.parallelStream()//
+				// .peek(n -> LOGGER.info("{} -> {}", myIdentity, n.getId()))//
+				.map(n -> new RestClientStubMessageHandler(this.message, n.getId()))//
+				.map(RestClientStubMessageHandler::handleStubMessage)//
 				.reduce((t, u) -> {
 
-					System.out.println("combining " + t + " and " + u);
-					ExecutionTrace et = new ExecutionTrace();
-					
-					et.getNodes().add(myIdentity);
-					et.getNodes().addAll(t.getNodes());
-					et.getNodes().addAll(u.getNodes());
-					et.setPayload(t.getPayload().add(u.getPayload()));
+					t.add(u);
 
-					return et;
+					return t;
 				}).orElse(new ExecutionTrace());
 
 	}

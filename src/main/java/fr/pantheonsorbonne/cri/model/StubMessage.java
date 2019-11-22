@@ -1,15 +1,19 @@
 package fr.pantheonsorbonne.cri.model;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 @JsonIgnoreProperties
 public class StubMessage {
@@ -30,27 +34,37 @@ public class StubMessage {
 		this.multigraph = multigraph;
 	}
 
-	public Link[] getLinks() {
+	public Set<Link> getLinks() {
 		return links;
 	}
 
-	public void setLinks(Link[] links) {
+	public void setLinks(Set<Link> links) {
 		this.links = links;
 	}
 
-	public Node[] getNodes() {
+	public Set<Node> getNodes() {
 		return nodes;
 	}
 
-	public void setNodes(Node[] nodes) {
+	public void setNodes(Set<Node> nodes) {
 		this.nodes = nodes;
 	}
 
 	private boolean directed;
 	private boolean multigraph;
-	private Link[] links;
-	private Node[] nodes;
+	private Set<Link> links = new HashSet<>();
+	private Set<Node> nodes = new HashSet<>();
 	private Object graph;
+	@XmlElement(required = false)
+	private ContextAutomaton context;
+
+	public ContextAutomaton getContext() {
+		return context;
+	}
+
+	public void setContext(ContextAutomaton context) {
+		this.context = context;
+	}
 
 	public Object getGraph() {
 		return graph;
@@ -59,4 +73,54 @@ public class StubMessage {
 	public void setGraph(Object graph) {
 		this.graph = graph;
 	}
+
+	public Node firstNext(Node node) {
+		return this.next(node).iterator().next();
+	}
+
+	public Collection<Node> next(Node node) {
+
+		return links.stream().filter(l -> l.getSource().equals(node.getId()))
+				.map(l -> nodes.stream().filter(n -> n.getId().equals(l.getTarget())).findAny().orElseThrow())
+				.collect(Collectors.toSet());
+
+	}
+
+	public Node randNext(Node node) {
+
+		Collection<Node> nexts = this.next(node);
+		return nexts.stream().skip((int) (nexts.size() * Math.random())).findFirst().orElseThrow();
+
+	}
+
+	public Collection<Node> prev(Node node) {
+
+		return links.stream().filter(l -> l.getTarget().equals(node.getId()))
+				.map(l -> nodes.stream().filter(n -> n.getId().equals(l.getSource())).findAny().orElseThrow())
+				.collect(Collectors.toSet());
+
+	}
+
+	public Node prevGateway(final Node node) {
+
+		Node tentativeNode = node;
+		Collection<Node> previousNodes;
+		while (!(previousNodes = this.prev(tentativeNode)).isEmpty()) {
+
+			Optional<Node> gateway = nodes.stream().filter(Node::isGateway).findAny();
+			if (gateway.isPresent()) {
+				return gateway.get();
+			}
+
+			tentativeNode = previousNodes.iterator().next();
+		}
+
+		throw new RuntimeException("No previous Gateway");
+
+	}
+	
+	public Node getNodeFromId(String id) {
+		return this.getNodes().stream().filter(n -> n.getId().equals(id)).findAny().orElseThrow();
+	}
+
 }

@@ -21,7 +21,6 @@ public class ExecutionTrace {
 	public static final ExecutionTrace EMPTY = new ExecutionTrace();
 	Payload payload = Payload.EMPTY;
 
-
 	List<String> nodes = new ArrayList<>();
 
 	public Payload getPayload() {
@@ -38,6 +37,17 @@ public class ExecutionTrace {
 
 	public void setNodes(List<String> nodes) {
 		this.nodes = nodes;
+	}
+
+	public void add(ExecutionTrace t) {
+		if(t==null) {
+			System.out.println("oups");
+		}
+		ExecutionTrace res = new ExecutionTrace();
+		
+		this.nodes.addAll(t.getNodes());
+		this.payload.add(t.getPayload());
+		
 	}
 
 }

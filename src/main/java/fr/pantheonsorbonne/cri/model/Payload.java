@@ -57,17 +57,18 @@ public class Payload {
 		this.dummyPaddings = dummyPaddings;
 	}
 
-	public Payload add(Payload p1) {
-		return Payload.add(this, p1);
+	public void add(Payload p1) {
+		Payload.add(this, p1);
 	}
 
 	public static Payload add(Payload p1, Payload p2) {
-		Payload p = new Payload();
-		p.setDummyPaddings(p1.getDummyPaddings() + p2.getDummyPaddings());
-		p.setInByteCount(p1.getInByteCount() + p1.getInByteCount());
-		p.setInstructions(p1.getInstructions() + p2.getInstructions());
-		p.setOutByteCount(p1.getOutByteCount() + p2.getOutByteCount());
-		return p;
+		
+		p1.setDummyPaddings(p1.getDummyPaddings() + p2.getDummyPaddings());
+		p1.setInByteCount(p1.getInByteCount() + p1.getInByteCount());
+		p1.setInstructions(p1.getInstructions() + p2.getInstructions());
+		p1.setOutByteCount(p1.getOutByteCount() + p2.getOutByteCount());
+		return p1;
+		
 	}
 
 }

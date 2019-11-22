@@ -1,10 +1,5 @@
 package fr.pantheonsorbonne.cri.services;
 
-import java.time.Instant;
-
-import fr.pantheonsorbonne.cri.model.ExecutionTrace;
-import fr.pantheonsorbonne.cri.model.StubMessage;
-
 public class WrapperStubMessageHandler implements StubMessageHandler {
 
 	private StubMessageHandler delegate;
@@ -16,10 +11,9 @@ public class WrapperStubMessageHandler implements StubMessageHandler {
 	}
 
 	@Override
-	public ExecutionTrace handleStubMessage() {
-		ExecutionTrace et = delegate.handleStubMessage();
-		et.getNodes().add(nodeIdentified+" "+Instant.now());
-		return et;
+	public void handleStubMessage() {
+		delegate.handleStubMessage();
+
 	}
 
 }

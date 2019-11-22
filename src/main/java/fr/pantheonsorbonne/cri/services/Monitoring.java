@@ -6,31 +6,45 @@ import java.io.IOException;
 import java.time.Instant;
 
 import fr.pantheonsorbonne.cri.model.ExecutionTrace;
+import fr.pantheonsorbonne.cri.model.MonitoringInfo;
+import fr.pantheonsorbonne.cri.model.Node.NodeType;
 import fr.pantheonsorbonne.cri.model.StubMessage;
 
 public class Monitoring extends StubMessageHandlerImpl {
 
-	public Monitoring(StubMessage message, String nodeIdentifier) {
+	private StubMessageHandler delegate;
+
+	public Monitoring(StubMessage message, String nodeIdentifier, StubMessageHandler delegate) {
 		super(message, nodeIdentifier);
+		this.delegate = delegate;
 
 	}
 
 	@Override
-	public ExecutionTrace handleStubMessage() {
-		try {
-			File csvOutputFile = new File("monitoring.csv");
-			String deploymentMode = StubMessageHandlerBuilder.getNextHopClass()
-					.equals(JMSClientStubMessageHandler.class) ? "JMS" : "REST";
-			try (FileWriter writer = new FileWriter(csvOutputFile, true)) {
-				writer.write(Instant.now().toEpochMilli() + "," + deploymentMode + ","
-						+ (this.message.getEndEpoch() - this.message.getStartEpoch()) + "\n");
-			}
+	public void handleStubMessage() {
 
-		} catch (IOException e) {
-			e.printStackTrace();
+		this.message.pushMonitoring(this.nodeIdentifier);
+		if (this.message.getNodeFromId(nodeIdentifier).getNodeType().equals(NodeType.SINK)) {
+			try {
+				File csvOutputFile = new File("monitoring.csv");
+				String deploymentMode = StubMessageHandlerBuilder.getNextHopClass()
+						.equals(JMSClientStubMessageHandler.class) ? "JMS" : "REST";
+
+				long initialEpoch = this.message.getMonitoringInfo().get(0).getEpoch();
+				try (FileWriter writer = new FileWriter(csvOutputFile, true)) {
+					for (MonitoringInfo info : this.message.getMonitoringInfo()) {
+						writer.write(String.format("%s,%s,%d,%d%n", info.getNodeName(), deploymentMode, info.getEpoch(),
+								info.getEpoch() - initialEpoch));
+					}
+				}
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
-		return new ExecutionTrace();
+		delegate.handleStubMessage();
+
 	}
 
 }

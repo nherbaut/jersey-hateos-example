@@ -48,7 +48,5 @@ public abstract class StubMessageHandlerImpl implements StubMessageHandler {
 	}
 
 
-	@Override
-	public abstract ExecutionTrace handleStubMessage();
 
 }

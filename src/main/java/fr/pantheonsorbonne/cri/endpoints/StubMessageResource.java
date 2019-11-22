@@ -38,9 +38,10 @@ public class StubMessageResource {
 	@Path("/{identity}")
 	@POST()
 	@Consumes(value = MediaType.APPLICATION_JSON)
-	public ExecutionTrace welcome(StubMessage message, @PathParam("identity") String id) {
+	public Response welcome(StubMessage message, @PathParam("identity") String id) {
 		LOGGER.debug("received for {} with context {}", id, message.getContext());
-		return StubMessageHandlerBuilder.of(message, message.getNodeFromId(id)).handleStubMessage();
+		StubMessageHandlerBuilder.of(message, message.getNodeFromId(id)).handleStubMessage();
+		return Response.ok().build();
 
 	}
 

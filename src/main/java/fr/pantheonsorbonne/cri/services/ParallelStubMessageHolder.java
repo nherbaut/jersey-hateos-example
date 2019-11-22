@@ -29,7 +29,7 @@ public class ParallelStubMessageHolder extends StubMessageHandlerImpl {
 	}
 
 	@Override
-	public ExecutionTrace handleStubMessage() {
+	public void handleStubMessage() {
 
 		final String token = this.message.getContext().getToken();
 		synchronized (lock) {
@@ -44,19 +44,14 @@ public class ParallelStubMessageHolder extends StubMessageHandlerImpl {
 					Node nextNode = message.firstNext(this.getMyNode());
 					StubMessageHandler nextHandler = StubMessageHandlerBuilder.of(message, nextNode);
 
-					ExecutionTrace et = nextHandler.handleStubMessage();
-					et.getNodes().add(this.nodeIdentifier + "@" + Instant.now() + " hit AND fired");
-					return et;
+					nextHandler.handleStubMessage();
+
 				}
 
 			}
 		}
 
-		ExecutionTrace et = new ExecutionTrace();
-
-		et.getNodes().add(this.nodeIdentifier + "/" + Instant.now() + " hit but not fired");
-		return et;
-
+		
 	}
 
 }

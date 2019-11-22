@@ -24,37 +24,43 @@ public abstract class StubMessageHandlerBuilder {
 
 	public static StubMessageHandler of(StubMessage message, Node n,
 			Class<? extends StubMessageHandler> nextHopHandler) {
+
+		StubMessageHandler res = null;
 		switch (n.getNodeType()) {
 		case GATEWAY:
 			switch (n.getGatewayNature()) {
 			case EXCLUSIVE_CONVERGING:
-				return new WrapperStubMessageHandler(StubMessageHandlerBuilder.of(message, message.firstNext(n)),
-						n.getId());
+				res = StubMessageHandlerBuilder.of(message, message.firstNext(n));
+				break;
 			case EXCLUSIVE_DIVERGING:
-				return new WrapperStubMessageHandler(StubMessageHandlerBuilder.of(message, message.randNext(n)),
-						n.getId());
+				res = StubMessageHandlerBuilder.of(message, message.randNext(n));
+				break;
 			case PARALLEL_CONVERGING:
-				return new WrapperStubMessageHandler(new ParallelStubMessageHolder(message, n.getId()), n.getId());
+				res = new ParallelStubMessageHolder(message, n.getId());
+				break;
 			case PARALLEL_DIVERGING:
-				return new WrapperStubMessageHandler(new ParallelStubMessageHandler(message, n.getId()), n.getId());
+				res = new ParallelStubMessageHandler(message, n.getId());
+				break;
 			}
 			break;
 		case SOURCE:
-			message.setStartEpoch(Instant.now().toEpochMilli());
-			return new WrapperStubMessageHandler(StubMessageHandlerBuilder.of(message, message.firstNext(n)),
-					n.getId());
-		case SINK:
-			message.setEndEpoch((Instant.now().toEpochMilli()));
 
-			return new WrapperStubMessageHandler(new CompositeStubMessageHandler(message, n.getId(),
-					ProcessingStubMessageHandler.class, Monitoring.class), n.getId());
+			res = StubMessageHandlerBuilder.of(message, message.firstNext(n));
+			break;
+		case SINK:
+			res = new ProcessingStubMessageHandler(message, n.getId());
+			break;
 		case TASK:
-			return new WrapperStubMessageHandler(new TaskStubMessageHandler(message, n.getId(), nextHopHandler),
-					n.getId());
+			res = new TaskStubMessageHandler(message, n.getId(), nextHopHandler);
+			break;
 
 		}
 
-		throw new RuntimeException("Invalid NodeType/Gateway");
+		if (res == null) {
+			throw new RuntimeException("Invalid NodeType/Gateway");
+		}
+
+		return new Monitoring(message, n.getId(), res);
 
 	}
 

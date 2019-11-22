@@ -20,15 +20,14 @@ public class CompositeStubMessageHandler implements StubMessageHandler {
 	}
 
 	@Override
-	public ExecutionTrace handleStubMessage() {
-		ExecutionTrace trace = new ExecutionTrace();
+	public void handleStubMessage() {
+
 		try {
 			for (Class<? extends StubMessageHandler> klass : klasses) {
-				StubMessageHandler handler;
+				StubMessageHandler handler = (StubMessageHandler) klass.getConstructors()[0].newInstance(this.message,
+						this.identity);
+				handler.handleStubMessage();
 
-				handler = (StubMessageHandler) klass.getConstructors()[0].newInstance(this.message, this.identity);
-
-				trace.add(handler.handleStubMessage());
 			}
 
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
@@ -36,7 +35,6 @@ public class CompositeStubMessageHandler implements StubMessageHandler {
 			throw new RuntimeException(e);
 		}
 
-		return trace;
 	}
 
 }

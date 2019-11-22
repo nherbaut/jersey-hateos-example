@@ -4,6 +4,6 @@ import fr.pantheonsorbonne.cri.model.ExecutionTrace;
 
 public interface StubMessageHandler {
 
-	ExecutionTrace handleStubMessage();
+	void handleStubMessage();
 
 }

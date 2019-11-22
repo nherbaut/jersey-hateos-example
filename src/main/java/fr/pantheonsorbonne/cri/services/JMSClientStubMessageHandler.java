@@ -14,7 +14,7 @@ public class JMSClientStubMessageHandler extends StubMessageHandlerImpl {
 	}
 
 	@Override
-	public ExecutionTrace handleStubMessage() {
+	public void handleStubMessage() {
 
 		try {
 			String nextNodeId = this.message.firstNext(this.message.getNodeFromId(this.nodeIdentifier)).getId();
@@ -22,7 +22,7 @@ public class JMSClientStubMessageHandler extends StubMessageHandlerImpl {
 			message.setStringProperty("identifier", nextNodeId);
 			JMSUtils.getProducerMap().get(nextNodeId).send(message);
 
-			return new ExecutionTrace();
+			
 		} catch (JMSException e) {
 			throw new RuntimeException(e);
 		}

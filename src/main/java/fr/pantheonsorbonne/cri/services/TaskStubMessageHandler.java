@@ -42,11 +42,9 @@ public class TaskStubMessageHandler extends StubMessageHandlerImpl {
 	private final StubMessageHandler nextHopHandler;
 
 	@Override
-	public ExecutionTrace handleStubMessage() {
-		ExecutionTrace trace = processingHandler.handleStubMessage();
-		trace.add(nextHopHandler.handleStubMessage());
-
-		return trace;
+	public void handleStubMessage() {
+		processingHandler.handleStubMessage();
+		nextHopHandler.handleStubMessage();
 
 	}
 

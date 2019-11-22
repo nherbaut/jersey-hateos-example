@@ -17,12 +17,10 @@ public class ProcessingStubMessageHandler extends StubMessageHandlerImpl {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProcessingStubMessageHandler.class);
 
 	@Override
-	public ExecutionTrace handleStubMessage() {
+	public void handleStubMessage() {
 		
 		
-		ExecutionTrace et = new ExecutionTrace();
-		et.setPayload(this.getMyNode().getPayload());
-		return et;
+		//TODO processing
 
 	}
 

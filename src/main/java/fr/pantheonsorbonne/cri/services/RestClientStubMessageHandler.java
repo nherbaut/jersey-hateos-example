@@ -26,17 +26,19 @@ public class RestClientStubMessageHandler extends StubMessageHandlerImpl {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RestClientStubMessageHandler.class);
 
 	@Override
-	public ExecutionTrace handleStubMessage() {
+	public void handleStubMessage() {
 
 		String nextNodeId=this.message.firstNext(this.message.getNodeFromId(this.nodeIdentifier)).getId();
 		WebTarget target = client.target(UriBuilder.fromUri(this.getMyNode().getUrl())
 				.path(nextNodeId).build());
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.post(Entity.entity(message, MediaType.APPLICATION_JSON));
-		ExecutionTrace t =  response.readEntity(ExecutionTrace.class);
+		if(response.getStatus()!=200) {
+			throw new RuntimeException("response is " + response.getStatus());
+		}
 		
 
-		return t;
+		
 		
 
 	}

@@ -1,7 +1,10 @@
 package fr.pantheonsorbonne.cri.model;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -58,25 +61,23 @@ public class StubMessage {
 	private Object graph;
 	@XmlElement(required = false)
 	private ContextAutomaton context;
+
 	@XmlElement(required = false)
-	long startEpoch;
-	@XmlElement(required = false)
-	long endEpoch;
+	List<MonitoringInfo> monitoringInfo = new ArrayList<>();
 
-	public long getStartEpoch() {
-		return startEpoch;
+	public void pushMonitoring(String nodeId) {
+		MonitoringInfo info = new MonitoringInfo();
+		info.setEpoch(Instant.now().toEpochMilli());
+		info.setNodeName(nodeId);
+		monitoringInfo.add(info);
 	}
 
-	public void setStartEpoch(long startEpoch) {
-		this.startEpoch = startEpoch;
+	public List<MonitoringInfo> getMonitoringInfo() {
+		return monitoringInfo;
 	}
 
-	public long getEndEpoch() {
-		return endEpoch;
-	}
-
-	public void setEndEpoch(long endEpoch) {
-		this.endEpoch = endEpoch;
+	public void setMonitoringInfo(List<MonitoringInfo> monitoringInfo) {
+		this.monitoringInfo = monitoringInfo;
 	}
 
 	public ContextAutomaton getContext() {

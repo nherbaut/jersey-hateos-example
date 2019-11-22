@@ -31,7 +31,7 @@ import fr.pantheonsorbonne.cri.services.TaskStubMessageHandler;
  */
 public class Main {
 	// Base URI the Grizzly HTTP server will listen on
-	public static final String BASE_URI = "http://0.0.0.0:8080";
+	public static final String BASE_URI = "http://0.0.0.0:8080/";
 
 	/**
 	 * Starts Grizzly HTTP server exposing JAX-RS resources defined in this
@@ -48,36 +48,9 @@ public class Main {
 				.property("nodeIdentifier", nodeIdentifier)//
 				.register(JacksonFeature.class)//
 				.register(DeclarativeLinkingFeature.class)//
-				.register(ExceptionMapper.class)//
-				.register(new Binder() {
-
-					@Override
-					public void bind(DynamicConfiguration config) {
-
-						config.bind(BuilderHelper.link(TaskStubMessageHandler.class).named("composite")
-								.to(StubMessageHandlerImpl.class).build());
-						config.bind(BuilderHelper.link(ProcessingStubMessageHandler.class).named("processing")
-								.to(StubMessageHandlerImpl.class).build());
-						config.bind(BuilderHelper.link(ProcessingStubMessageHandler.class).named("save")
-								.to(StubMessageHandlerImpl.class).build());
-						config.bind(BuilderHelper.link(ProcessingStubMessageHandler.class).named("load")
-								.to(StubMessageHandlerImpl.class).build());
-						config.bind(BuilderHelper.link(ParallelStubMessageHandler.class).named("parallel")
-								.to(StubMessageHandlerImpl.class).build());//
-						config.bind(BuilderHelper.link(RestClientStubMessageHandler.class).named("nextHop")
-								.to(StubMessageHandlerImpl.class).build());//
-
-					}
-				})//
-				.register(new AbstractBinder() {
-
-					@Override
-					protected void configure() {
-						bind(nodeIdentifier).to(String.class).named("nodeIdentifier");
-
-					}
-				});
-
+				.register(ExceptionMapper.class);
+				
+				
 		return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
 	}
 

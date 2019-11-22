@@ -54,9 +54,30 @@ public class StubMessage {
 	private boolean multigraph;
 	private Set<Link> links = new HashSet<>();
 	private Set<Node> nodes = new HashSet<>();
+	@XmlElement(required = false)
 	private Object graph;
 	@XmlElement(required = false)
 	private ContextAutomaton context;
+	@XmlElement(required = false)
+	long startEpoch;
+	@XmlElement(required = false)
+	long endEpoch;
+
+	public long getStartEpoch() {
+		return startEpoch;
+	}
+
+	public void setStartEpoch(long startEpoch) {
+		this.startEpoch = startEpoch;
+	}
+
+	public long getEndEpoch() {
+		return endEpoch;
+	}
+
+	public void setEndEpoch(long endEpoch) {
+		this.endEpoch = endEpoch;
+	}
 
 	public ContextAutomaton getContext() {
 		return context;
@@ -118,7 +139,7 @@ public class StubMessage {
 		throw new RuntimeException("No previous Gateway");
 
 	}
-	
+
 	public Node getNodeFromId(String id) {
 		return this.getNodes().stream().filter(n -> n.getId().equals(id)).findAny().orElseThrow();
 	}

@@ -83,7 +83,7 @@ public class Node {
 	}
 
 	private boolean isSource() {
-		return this.getType().equals("starEvent");
+		return this.getType().equals("startEvent");
 	}
 
 	public NodeType getNodeType() {

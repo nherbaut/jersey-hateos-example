@@ -5,12 +5,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.jms.JMSException;
+import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import fr.pantheonsorbonne.cri.model.StubMessage;
 import fr.pantheonsorbonne.cri.services.JMSUtils;
@@ -18,33 +22,22 @@ import fr.pantheonsorbonne.cri.services.StubMessageHandlerBuilder;
 
 public class JMSEndoint {
 
-	ExecutorService executor = Executors.newWorkStealingPool(10);
+	static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("MSProducerThread-%d").build();
+	static ExecutorService executor = Executors.newFixedThreadPool(10, namedThreadFactory);
 
-	public JMSEndoint() {
+	public static void onMessageReceived(Message incomingMessage) {
 
-		JMSUtils.getConsumerMap().values().stream().map(c -> JMSEndoint.createComsumerThread(c, executor))
-				.forEach(Thread::start);
-	}
-
-	private static Thread createComsumerThread(MessageConsumer c, ExecutorService executor) {
-		return new Thread(new Runnable() {
+		executor.submit(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					TextMessage txtMessage = (TextMessage) c.receive();
+					TextMessage txtMessage = (TextMessage) incomingMessage;
 					StringReader reader = new StringReader(txtMessage.getText());
 					StubMessage message = (StubMessage) JMSUtils.getJaxbContext().createUnmarshaller()
 							.unmarshal(reader);
 					String id = txtMessage.getStringProperty("identifier");
-					executor.execute(new Runnable() {
-
-						@Override
-						public void run() {
-							StubMessageHandlerBuilder.of(message, message.getNodeFromId(id)).handleStubMessage();
-
-						}
-					});
+					StubMessageHandlerBuilder.of(message, message.getNodeFromId(id)).handleStubMessage();
 
 				} catch (JMSException | JAXBException e) {
 					throw new RuntimeException(e);
@@ -52,6 +45,7 @@ public class JMSEndoint {
 
 			}
 		});
+
 	}
 
 }

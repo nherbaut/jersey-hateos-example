@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -13,12 +14,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 @JsonIgnoreProperties
+@XmlSeeAlso({LinkedHashMap.class})
 public class StubMessage {
 
 	public boolean isDirected() {

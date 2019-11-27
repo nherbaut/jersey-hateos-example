@@ -39,6 +39,7 @@ public class StubMessageResource {
 	@POST()
 	@Consumes(value = MediaType.APPLICATION_JSON)
 	public Response welcome(StubMessage message, @PathParam("identity") String id) {
+		LOGGER.info("New Message to {}" , id);
 		LOGGER.debug("received for {} with context {}", id, message.getContext());
 		StubMessageHandlerBuilder.of(message, message.getNodeFromId(id)).handleStubMessage();
 		return Response.ok().build();

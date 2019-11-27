@@ -7,13 +7,17 @@ import copy
 import networkx as nx
 import re
 import os
-
+import random
 
 IP=os.environ.get("IP",None)
 if IP is None:
     print("please specify env var IP")
     exit(-1)
-
+else:
+    if ":" in IP:
+        IP=IP.split(":")
+    else:
+        IP=[IP]
 class Payload:
     def __init__(self, instructions=0, in_bytes_count=0, out_bytes_count=0, dummy_padding=0):
         self.instructions = instructions
@@ -65,7 +69,7 @@ if __name__=='__main__':
     # plt.draw()
     i=8080
     for n in g.nodes:
-        g.nodes[n]["url"]="http://%s:%d"%(IP,i)
+        g.nodes[n]["url"]="http://%s:%d"%(random.choice(IP),i)
         #i+=1
 
     print(json.dumps(nx.node_link_data(g)))

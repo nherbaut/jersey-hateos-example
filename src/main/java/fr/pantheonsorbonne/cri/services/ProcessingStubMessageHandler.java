@@ -1,5 +1,10 @@
 package fr.pantheonsorbonne.cri.services;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +23,29 @@ public class ProcessingStubMessageHandler extends StubMessageHandlerImpl {
 
 	@Override
 	public void handleStubMessage() {
-		
-		
-		//TODO processing
+
+		compute(this.getMyNode().getPayload().getInstructions());
+
+	}
+
+	public static long compute(long limit) {
+
+		List<Long> res = new ArrayList<>();
+		List<Long> ints = LongStream.range(2L, Math.round(Math.pow(10.0, limit))).boxed().collect(Collectors.toList());
+		while (!ints.isEmpty()) {
+			Long first = ints.get(0);
+
+			res.add(first);
+			ints = ints.stream()//
+					.filter((Long l) -> Long.remainderUnsigned(l, first) != 0L)
+					.collect(Collectors.toList());
+		}
+
+		if (!res.isEmpty()) {
+			return res.get(res.size() - 1);
+		} else {
+			return 0;
+		}
 
 	}
 

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import fr.pantheonsorbonne.cri.model.Node;
+import fr.pantheonsorbonne.cri.model.Node.NodeType;
 import fr.pantheonsorbonne.cri.model.StubMessage;
 
 public abstract class StubMessageHandlerBuilder {
@@ -22,7 +23,7 @@ public abstract class StubMessageHandlerBuilder {
 		StubMessageHandlerBuilder.nextHopClass = nextHopClass;
 	}
 
-	public static StubMessageHandlerImpl of(StubMessage message, Node n,
+	public static StubMessageHandler of(StubMessage message, Node n,
 			Class<? extends StubMessageHandler> nextHopHandler) {
 
 		StubMessageHandler res = null;
@@ -44,8 +45,7 @@ public abstract class StubMessageHandlerBuilder {
 			}
 			break;
 		case SOURCE:
-
-			res = new MessageTagger( StubMessageHandlerBuilder.of(message, message.firstNext(n)));
+			res = new MessageTagger(StubMessageHandlerBuilder.of(message, message.firstNext(n)));
 			break;
 		case SINK:
 			res = new ProcessingStubMessageHandler(message, n.getId());
@@ -60,11 +60,13 @@ public abstract class StubMessageHandlerBuilder {
 			throw new RuntimeException("Invalid NodeType/Gateway");
 		}
 
-		return new MonitoringStubMessageHandler(message, n.getId(), res);
+		res = new MonitoringStubMessageHandler(res, n.getId());
+
+		return res;
 
 	}
 
-	public static StubMessageHandlerImpl of(StubMessage message, Node n) {
+	public static StubMessageHandler of(StubMessage message, Node n) {
 		return of(message, n, nextHopClass);
 	}
 

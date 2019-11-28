@@ -19,60 +19,62 @@ import fr.pantheonsorbonne.cri.model.Node;
 import fr.pantheonsorbonne.cri.model.Node.NodeType;
 import fr.pantheonsorbonne.cri.model.StubMessage;
 
-public class MonitoringStubMessageHandler extends StubMessageHandlerImpl {
+public class MonitoringStubMessageHandler extends WrapperStubMessageHandlerImpl {
 
-	private StubMessageHandler delegate;
-	private final Path monitoringOutputFilePath;
+	final private String nodeId;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MonitoringStubMessageHandler.class);
+	public MonitoringStubMessageHandler(StubMessageHandler delegate, String nodeId) {
+		super(delegate);
+		this.nodeId = nodeId;
 
-	public MonitoringStubMessageHandler(StubMessage message, String nodeIdentifier, StubMessageHandler delegate) {
-		super(message, nodeIdentifier);
-		this.delegate = delegate;
+	}
+
+	private static final Path monitoringOutputFilePath;
+	private static final FileWriter writer;
+	static {
 		try {
 			if (Strings.isNullOrEmpty(System.getenv("MONITORING"))) {
-				this.monitoringOutputFilePath = Paths.get("./monitoring.csv");
+				monitoringOutputFilePath = Paths.get("./monitoring.csv");
 			} else {
-				this.monitoringOutputFilePath = Paths.get(System.getenv("MONITORING"));
-				if (!Files.exists(this.monitoringOutputFilePath)) {
-					if (!Files.exists(this.monitoringOutputFilePath.getParent())) {
-						Files.createDirectories(this.monitoringOutputFilePath.getParent());
+				monitoringOutputFilePath = Paths.get(System.getenv("MONITORING"));
+				if (!Files.exists(monitoringOutputFilePath)) {
+					if (!Files.exists(monitoringOutputFilePath.getParent())) {
+						Files.createDirectories(monitoringOutputFilePath.getParent());
 					}
 				}
 
 			}
 
+			writer = new FileWriter(monitoringOutputFilePath.toFile(), true);
+
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to create monitoring file", e);
 
 		}
-
 	}
 
-	@Override
-	public synchronized void handleStubMessage() {
+	private static final Logger LOGGER = LoggerFactory.getLogger(MonitoringStubMessageHandler.class);
 
-		this.getMessage().pushMonitoring(this.nodeIdentifier);
-		Node n = this.getMessage().getNodeFromId(nodeIdentifier);
+	@Override
+	protected void preHandleAction() {
+		this.delegate.getMessage().pushMonitoring(nodeId);
+		Node n = this.delegate.getMessage().getNodeFromId(nodeId);
 
 		try {
-			File csvOutputFile = monitoringOutputFilePath.toFile();
+
 			String deploymentMode = StubMessageHandlerBuilder.getNextHopClass().getSimpleName();
 
-			long initialEpoch = this.getMessage().getMonitoringInfo().get(0).getEpoch();
-			try (FileWriter writer = new FileWriter(csvOutputFile, true)) {
-				MonitoringInfo info = this.getMessage().getLastMonitoringInfo();
-				writer.write(String.format("%d,%s,%s,%s,%s,%d,%d%n", Instant.now().toEpochMilli(),
-						this.getMessage().getId(), info.getNodeName(), n.getNodeType().toString(), deploymentMode,
-						info.getEpoch(), info.getEpoch() - initialEpoch));
+			long initialEpoch = this.delegate.getMessage().getMonitoringInfo().get(0).getEpoch();
 
-			}
+			MonitoringInfo info = this.delegate.getMessage().getLastMonitoringInfo();
+			writer.write(String.format("%d,%s,%s,%s,%s,%d,%d%n", Instant.now().toEpochMilli(),
+					this.delegate.getMessage().getId(), info.getNodeName(), n.getNodeType().toString(), deploymentMode,
+					info.getEpoch(), info.getEpoch() - initialEpoch));
+			writer.flush();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		delegate.handleStubMessage();
 
 	}
 

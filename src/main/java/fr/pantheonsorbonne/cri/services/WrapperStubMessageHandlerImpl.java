@@ -2,7 +2,7 @@ package fr.pantheonsorbonne.cri.services;
 
 public class WrapperStubMessageHandlerImpl extends WrapperStubMessageHandler {
 
-	public WrapperStubMessageHandlerImpl(StubMessageHandlerImpl delegate) {
+	public WrapperStubMessageHandlerImpl(StubMessageHandler delegate) {
 		super(delegate);
 
 	}

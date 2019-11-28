@@ -27,7 +27,7 @@ public class RestClientStubMessageHandler extends StubMessageHandlerImpl {
 	@Override
 	public void handleStubMessage() {
 
-		String nextNodeId = this.getMessage().firstNext(this.getMessage().getNodeFromId(this.nodeIdentifier)).getId();
+		String nextNodeId = this.getMessage().firstNext(this.getMessage().getNodeFromId(this.getNodeIdentifier())).getId();
 		WebTarget target = client.target(UriBuilder.fromUri(this.getMyNode().getUrl()).path(nextNodeId).build());
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.post(Entity.entity(this.getMessage(), MediaType.APPLICATION_JSON));

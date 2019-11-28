@@ -1,10 +1,12 @@
 package fr.pantheonsorbonne.cri.services;
 
+import fr.pantheonsorbonne.cri.model.StubMessage;
+
 public abstract class WrapperStubMessageHandler implements StubMessageHandler {
 
-	protected StubMessageHandlerImpl delegate;
+	protected StubMessageHandler delegate;
 
-	public WrapperStubMessageHandler(StubMessageHandlerImpl delegate) {
+	public WrapperStubMessageHandler(StubMessageHandler delegate) {
 		this.delegate = delegate;
 
 	}
@@ -20,5 +22,15 @@ public abstract class WrapperStubMessageHandler implements StubMessageHandler {
 	protected abstract void postHandleAction();
 
 	protected abstract void preHandleAction();
+
+	@Override
+	public String getNodeIdentifier() {
+		return this.delegate.getNodeIdentifier();
+	}
+
+	@Override
+	public StubMessage getMessage() {
+		return this.delegate.getMessage();
+	}
 
 }

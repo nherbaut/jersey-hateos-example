@@ -13,7 +13,7 @@ public class JMSClientStubMessageHandler extends StubMessageHandlerImpl {
 	@Override
 	public synchronized void handleStubMessage() {
 
-		Node n = this.getMessage().firstNext(this.getMessage().getNodeFromId(this.nodeIdentifier));
+		Node n = this.getMessage().firstNext(this.getMessage().getNodeFromId(this.getNodeIdentifier()));
 		String nextNodeId = n.getHost();
 		String nextNodeIdentifier = n.getId();
 		JMSUtils.sendTextMessage(nextNodeId, nextNodeIdentifier, JMSUtils.marshallMessage(this.getMessage()));

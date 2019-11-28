@@ -6,6 +6,10 @@ public interface StubMessageHandler {
 
 	void handleStubMessage();
 
+	String getNodeIdentifier();
+
+	StubMessage getMessage();
+
 	
 
 }

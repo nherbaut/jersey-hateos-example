@@ -37,4 +37,16 @@ public class CompositeStubMessageHandler implements StubMessageHandler {
 
 	}
 
+	@Override
+	public String getNodeIdentifier() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StubMessage getMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -20,11 +20,17 @@ public abstract class StubMessageHandlerImpl implements StubMessageHandler {
 
 	private StubMessage message;
 
-	protected StubMessage getMessage() {
+	@Override
+	public StubMessage getMessage() {
 		return message;
 	}
 
-	protected String nodeIdentifier;
+	private String nodeIdentifier;
+
+	@Override
+	public String getNodeIdentifier() {
+		return nodeIdentifier;
+	}
 
 	public StubMessageHandlerImpl(StubMessage message, String nodeIdentifier) {
 		this.message = message;

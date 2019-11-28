@@ -10,3 +10,8 @@ docker:
 
 run:
 	docker run -p 8080:8080 nherbaut/smart-ms-stub
+
+
+push:
+	docker push nherbaut/smart-ms-stub
+

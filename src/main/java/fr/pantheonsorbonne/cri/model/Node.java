@@ -25,6 +25,15 @@ public class Node {
 	private String type;
 	private String gatewayDirection;
 	private String url;
+	private String host;
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
 
 	public String getUrl() {
 		return url;

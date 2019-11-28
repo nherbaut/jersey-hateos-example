@@ -28,25 +28,22 @@ public class ProcessingStubMessageHandler extends StubMessageHandlerImpl {
 
 	}
 
-	public static long compute(long limit) {
+	public static long compute(long n) {
 
-		List<Long> res = new ArrayList<>();
-		List<Long> ints = LongStream.range(2L, Math.round(Math.pow(10.0, limit))).boxed().collect(Collectors.toList());
-		while (!ints.isEmpty()) {
-			Long first = ints.get(0);
+		long res = 0;
+		long limit = Math.round(Math.pow(10.0, n));
+		for (long i = 1; i < limit; i++) {
+			for (long j = 1; j < limit; j++) {
+				if (i % j != 0) {
+					res = i;
+					break;
+				}
 
-			res.add(first);
-			ints = ints.stream()//
-					.filter((Long l) -> Long.remainderUnsigned(l, first) != 0L)
-					.collect(Collectors.toList());
+			}
+
 		}
 
-		if (!res.isEmpty()) {
-			return res.get(res.size() - 1);
-		} else {
-			return 0;
-		}
-
+		return res;
 	}
 
 }

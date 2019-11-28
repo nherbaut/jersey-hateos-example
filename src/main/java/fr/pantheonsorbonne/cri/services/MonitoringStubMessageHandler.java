@@ -10,11 +10,11 @@ import fr.pantheonsorbonne.cri.model.MonitoringInfo;
 import fr.pantheonsorbonne.cri.model.Node.NodeType;
 import fr.pantheonsorbonne.cri.model.StubMessage;
 
-public class Monitoring extends StubMessageHandlerImpl {
+public class MonitoringStubMessageHandler extends StubMessageHandlerImpl {
 
 	private StubMessageHandler delegate;
 
-	public Monitoring(StubMessage message, String nodeIdentifier, StubMessageHandler delegate) {
+	public MonitoringStubMessageHandler(StubMessage message, String nodeIdentifier, StubMessageHandler delegate) {
 		super(message, nodeIdentifier);
 		this.delegate = delegate;
 
@@ -27,8 +27,8 @@ public class Monitoring extends StubMessageHandlerImpl {
 		if (this.message.getNodeFromId(nodeIdentifier).getNodeType().equals(NodeType.SINK)) {
 			try {
 				File csvOutputFile = new File("monitoring.csv");
-				String deploymentMode = StubMessageHandlerBuilder.getNextHopClass()
-						.equals(JMSClientStubMessageHandler.class) ? "JMS" : "REST";
+				String deploymentMode = StubMessageHandlerBuilder.getNextHopClass().getSimpleName();
+						
 
 				long initialEpoch = this.message.getMonitoringInfo().get(0).getEpoch();
 				try (FileWriter writer = new FileWriter(csvOutputFile, true)) {

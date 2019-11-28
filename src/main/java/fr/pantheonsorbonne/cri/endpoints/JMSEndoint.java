@@ -27,7 +27,7 @@ public abstract class JMSEndoint {
 	}
 
 	static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("MSProducerThread-%d").build();
-	static ExecutorService executor = Executors.newFixedThreadPool(10, namedThreadFactory);
+	static ExecutorService executor = Executors.newFixedThreadPool(100, namedThreadFactory);
 
 	public static void onMessageReceived(Message incomingMessage) {
 

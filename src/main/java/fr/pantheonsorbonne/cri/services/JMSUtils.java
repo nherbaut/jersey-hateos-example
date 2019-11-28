@@ -49,10 +49,10 @@ public abstract class JMSUtils {// fake JNDI context to create object
 
 	}
 
-	public static synchronized void sendTextMessage(final String nodeId, final String message) {
-		try (Connection connection = connectionFactoryMap.get(nodeId).createConnection()) {
+	public static synchronized void sendTextMessage(final String queueId, final String nodeId, final String message) {
+		try (Connection connection = connectionFactoryMap.get(queueId).createConnection()) {
 			try (Session session = connection.createSession()) {
-				try (MessageProducer producer = session.createProducer(new ActiveMQQueue(nodeId))) {
+				try (MessageProducer producer = session.createProducer(new ActiveMQQueue(queueId))) {
 					Message textMessage = session.createTextMessage(message);
 					textMessage.setStringProperty("identifier", nodeId);
 					producer.send(textMessage);
@@ -77,16 +77,17 @@ public abstract class JMSUtils {// fake JNDI context to create object
 			@Override
 			public void run() {
 				try (Connection con = connectionFactory.createConnection("nicolas", "nicolas")) {
+					con.start();
 					try (Session session = con.createSession()) {
-
 						try (MessageConsumer consumer = session.createConsumer(queue)) {
 							while (true) {
 								Message message = consumer.receive();
-								JMSEndoint.onMsalt/ethereum/ip_list.jsonessageReceived(message);
+								JMSEndoint.onMessageReceived(message);
 							}
 						}
 
 					}
+
 				} catch (JMSException e) {
 					throw new RuntimeException(e);
 				}

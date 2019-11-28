@@ -60,7 +60,7 @@ public abstract class StubMessageHandlerBuilder {
 			throw new RuntimeException("Invalid NodeType/Gateway");
 		}
 
-		return new Monitoring(message, n.getId(), res);
+		return new MonitoringStubMessageHandler(message, n.getId(), res);
 
 	}
 

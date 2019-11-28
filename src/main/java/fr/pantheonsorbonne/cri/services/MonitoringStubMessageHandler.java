@@ -8,6 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 
 import fr.pantheonsorbonne.cri.model.ExecutionTrace;
@@ -21,22 +24,26 @@ public class MonitoringStubMessageHandler extends StubMessageHandlerImpl {
 	private StubMessageHandler delegate;
 	private final Path monitoringOutputFilePath;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(MonitoringStubMessageHandler.class);
+
 	public MonitoringStubMessageHandler(StubMessage message, String nodeIdentifier, StubMessageHandler delegate) {
 		super(message, nodeIdentifier);
 		this.delegate = delegate;
-		if (Strings.isNullOrEmpty(System.getenv("MONITORING"))) {
-			this.monitoringOutputFilePath = Paths.get("./monitoring.csv");
-		} else {
-			this.monitoringOutputFilePath = Paths.get(System.getenv("MONITORING"));
-			if (!Files.exists(this.monitoringOutputFilePath)) {
-				if (!Files.exists(this.monitoringOutputFilePath.getParent())) {
-					try {
+		try {
+			if (Strings.isNullOrEmpty(System.getenv("MONITORING"))) {
+				this.monitoringOutputFilePath = Paths.get("./monitoring.csv");
+			} else {
+				this.monitoringOutputFilePath = Paths.get(System.getenv("MONITORING"));
+				if (!Files.exists(this.monitoringOutputFilePath)) {
+					if (!Files.exists(this.monitoringOutputFilePath.getParent())) {
 						Files.createDirectories(this.monitoringOutputFilePath.getParent());
-					} catch (IOException e) {
-						throw new RuntimeException("Failed to create monitoring file", e);
 					}
 				}
+
 			}
+			
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to create monitoring file", e);
 
 		}
 

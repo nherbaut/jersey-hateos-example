@@ -50,7 +50,7 @@ public abstract class JMSUtils {// fake JNDI context to create object
 	}
 
 	public static synchronized void sendTextMessage(final String queueId, final String nodeId, final String message) {
-		try (Connection connection = connectionFactoryMap.get(queueId).createConnection()) {
+		try (Connection connection = connectionFactoryMap.get(queueId).createConnection("nicolas", "nicolas")) {
 			try (Session session = connection.createSession()) {
 				try (MessageProducer producer = session.createProducer(new ActiveMQQueue(queueId))) {
 					Message textMessage = session.createTextMessage(message);

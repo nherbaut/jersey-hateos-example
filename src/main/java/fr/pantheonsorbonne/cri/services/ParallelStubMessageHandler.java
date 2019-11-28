@@ -30,7 +30,7 @@ public class ParallelStubMessageHandler extends StubMessageHandlerImpl {
 		Collection<Node> nextNodes = this.getMessage().next(this.getMyNode());
 		ContextAutomaton randomContext = ContextAutomaton.getRandom(nextNodes.size(), this.getMessage().getContext());
 		this.getMessage().setContext(randomContext);
-		ParallelStubMessageHolder.submitMessageOnHold(this.getMessage());
+		
 		nextNodes.parallelStream()//
 				// .peek(n -> LOGGER.info("{} -> {}", myIdentity, n.getId()))//
 				.map(n -> new RestClientStubMessageHandler(this.getMessage(), n.getId()))//

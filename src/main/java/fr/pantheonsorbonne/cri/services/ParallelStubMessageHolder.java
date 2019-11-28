@@ -17,9 +17,14 @@ public class ParallelStubMessageHolder extends StubMessageHandlerImpl {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ParallelStubMessageHolder.class);
 	private static final Map<String, StubMessage> onHoldMessages = new HashMap<>();
+
+	public static Map<String, StubMessage> getOnholdmessages() {
+		return onHoldMessages;
+	}
+
 	private static Object lock = new Object();
 
-	public static void submitMessageOnHold(StubMessage message) {
+	private static synchronized void submitMessageOnHold(StubMessage message) {
 		onHoldMessages.put(message.getContext().getToken(), message);
 	}
 
@@ -48,10 +53,13 @@ public class ParallelStubMessageHolder extends StubMessageHandlerImpl {
 
 				}
 
+			} else {
+				ContextAutomaton context = this.getMessage().getContext();
+				context.setCount(context.getCount() - 1);
+				submitMessageOnHold(this.getMessage());
 			}
 		}
 
-		
 	}
 
 }

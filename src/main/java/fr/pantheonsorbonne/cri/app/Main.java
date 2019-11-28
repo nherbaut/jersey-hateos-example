@@ -18,6 +18,8 @@ import org.glassfish.jersey.moxy.json.internal.MoxyJsonAutoDiscoverable;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.google.common.base.Strings;
+
 import fr.pantheonsorbonne.cri.mapper.ExceptionMapper;
 import fr.pantheonsorbonne.cri.services.ProcessingStubMessageHandler;
 import fr.pantheonsorbonne.cri.services.ParallelStubMessageHandler;
@@ -30,8 +32,17 @@ import fr.pantheonsorbonne.cri.services.TaskStubMessageHandler;
  *
  */
 public class Main {
-	// Base URI the Grizzly HTTP server will listen on
-	public static final String BASE_URI = "http://0.0.0.0:8080/";
+
+	public static final String BASE_URI;
+	public static final String BASE_URI_DEFAULT = "http://0.0.0.0:8080";
+
+	static {
+		if (Strings.isNullOrEmpty(System.getenv("BASE_URI"))) {
+			BASE_URI = BASE_URI_DEFAULT;
+		} else {
+			BASE_URI = System.getenv("BASE_URI");
+		}
+	}
 
 	/**
 	 * Starts Grizzly HTTP server exposing JAX-RS resources defined in this
@@ -49,8 +60,7 @@ public class Main {
 				.register(JacksonFeature.class)//
 				.register(DeclarativeLinkingFeature.class)//
 				.register(ExceptionMapper.class);
-				
-				
+
 		return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
 	}
 

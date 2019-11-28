@@ -12,6 +12,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.pantheonsorbonne.cri.model.Node;
 import fr.pantheonsorbonne.cri.model.StubMessage;
 
 public class RestClientStubMessageHandler extends StubMessageHandlerImpl {
@@ -27,8 +28,9 @@ public class RestClientStubMessageHandler extends StubMessageHandlerImpl {
 	@Override
 	public void handleStubMessage() {
 
-		String nextNodeId = this.getMessage().firstNext(this.getMessage().getNodeFromId(this.getNodeIdentifier())).getId();
-		WebTarget target = client.target(UriBuilder.fromUri(this.getMyNode().getUrl()).path(nextNodeId).build());
+		Node nextNode = this.getMessage().firstNext(this.getMessage().getNodeFromId(this.getNodeIdentifier()));
+
+		WebTarget target = client.target(UriBuilder.fromUri(nextNode.getUrl()).path(nextNode.getId()).build());
 		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.post(Entity.entity(this.getMessage(), MediaType.APPLICATION_JSON));
 		if (response.getStatus() != 200) {

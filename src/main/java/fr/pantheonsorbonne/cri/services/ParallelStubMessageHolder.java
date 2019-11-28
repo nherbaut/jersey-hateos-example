@@ -31,7 +31,7 @@ public class ParallelStubMessageHolder extends StubMessageHandlerImpl {
 	@Override
 	public void handleStubMessage() {
 
-		final String token = this.message.getContext().getToken();
+		final String token = this.getMessage().getContext().getToken();
 		synchronized (lock) {
 			if (onHoldMessages.containsKey(token)) {
 				StubMessage message = onHoldMessages.get(token);

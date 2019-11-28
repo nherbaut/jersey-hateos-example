@@ -22,7 +22,7 @@ public abstract class StubMessageHandlerBuilder {
 		StubMessageHandlerBuilder.nextHopClass = nextHopClass;
 	}
 
-	public static StubMessageHandler of(StubMessage message, Node n,
+	public static StubMessageHandlerImpl of(StubMessage message, Node n,
 			Class<? extends StubMessageHandler> nextHopHandler) {
 
 		StubMessageHandler res = null;
@@ -45,7 +45,7 @@ public abstract class StubMessageHandlerBuilder {
 			break;
 		case SOURCE:
 
-			res = StubMessageHandlerBuilder.of(message, message.firstNext(n));
+			res = new MessageTagger( StubMessageHandlerBuilder.of(message, message.firstNext(n)));
 			break;
 		case SINK:
 			res = new ProcessingStubMessageHandler(message, n.getId());
@@ -64,7 +64,7 @@ public abstract class StubMessageHandlerBuilder {
 
 	}
 
-	public static StubMessageHandler of(StubMessage message, Node n) {
+	public static StubMessageHandlerImpl of(StubMessage message, Node n) {
 		return of(message, n, nextHopClass);
 	}
 

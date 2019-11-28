@@ -1,9 +1,11 @@
 package fr.pantheonsorbonne.cri.services;
 
-import fr.pantheonsorbonne.cri.model.ExecutionTrace;
+import fr.pantheonsorbonne.cri.model.StubMessage;
 
 public interface StubMessageHandler {
 
 	void handleStubMessage();
+
+	
 
 }

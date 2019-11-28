@@ -18,18 +18,18 @@ import fr.pantheonsorbonne.cri.model.StubMessage;
 
 public abstract class StubMessageHandlerImpl implements StubMessageHandler {
 
-	
-	protected StubMessage message;
+	private StubMessage message;
+
+	protected StubMessage getMessage() {
+		return message;
+	}
+
 	protected String nodeIdentifier;
 
-
 	public StubMessageHandlerImpl(StubMessage message, String nodeIdentifier) {
-		this.message=message;
-		this.nodeIdentifier=nodeIdentifier;
+		this.message = message;
+		this.nodeIdentifier = nodeIdentifier;
 	}
-	
-
-
 
 	protected Collection<Node> getOutgoingNodes(StubMessage message, String nodeIdentifier) {
 		return message.getLinks().stream()//
@@ -40,13 +40,9 @@ public abstract class StubMessageHandlerImpl implements StubMessageHandler {
 
 	}
 
-
-
 	protected Node getMyNode() {
 		return message.getNodes().stream().filter(m -> m.getId().equals(this.nodeIdentifier)).findFirst().orElseThrow();
 
 	}
-
-
 
 }

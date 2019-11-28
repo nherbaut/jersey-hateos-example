@@ -27,13 +27,13 @@ public class ParallelStubMessageHandler extends StubMessageHandlerImpl {
 	@Override
 	public void handleStubMessage() {
 
-		Collection<Node> nextNodes = this.message.next(this.getMyNode());
-		ContextAutomaton randomContext = ContextAutomaton.getRandom(nextNodes.size(), this.message.getContext());
-		this.message.setContext(randomContext);
-		ParallelStubMessageHolder.submitMessageOnHold(message);
+		Collection<Node> nextNodes = this.getMessage().next(this.getMyNode());
+		ContextAutomaton randomContext = ContextAutomaton.getRandom(nextNodes.size(), this.getMessage().getContext());
+		this.getMessage().setContext(randomContext);
+		ParallelStubMessageHolder.submitMessageOnHold(this.getMessage());
 		nextNodes.parallelStream()//
 				// .peek(n -> LOGGER.info("{} -> {}", myIdentity, n.getId()))//
-				.map(n -> new RestClientStubMessageHandler(this.message, n.getId()))//
+				.map(n -> new RestClientStubMessageHandler(this.getMessage(), n.getId()))//
 				.forEach(RestClientStubMessageHandler::handleStubMessage);
 
 	}

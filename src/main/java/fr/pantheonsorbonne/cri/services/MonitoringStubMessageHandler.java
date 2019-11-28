@@ -41,7 +41,7 @@ public class MonitoringStubMessageHandler extends StubMessageHandlerImpl {
 				}
 
 			}
-			
+
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to create monitoring file", e);
 
@@ -50,27 +50,26 @@ public class MonitoringStubMessageHandler extends StubMessageHandlerImpl {
 	}
 
 	@Override
-	public void handleStubMessage() {
+	public synchronized void handleStubMessage() {
 
-		this.message.pushMonitoring(this.nodeIdentifier);
-		Node n = this.message.getNodeFromId(nodeIdentifier);
+		this.getMessage().pushMonitoring(this.nodeIdentifier);
+		Node n = this.getMessage().getNodeFromId(nodeIdentifier);
 
-		if (n.getNodeType().equals(NodeType.SINK)) {
-			try {
-				File csvOutputFile = monitoringOutputFilePath.toFile();
-				String deploymentMode = StubMessageHandlerBuilder.getNextHopClass().getSimpleName();
+		try {
+			File csvOutputFile = monitoringOutputFilePath.toFile();
+			String deploymentMode = StubMessageHandlerBuilder.getNextHopClass().getSimpleName();
 
-				long initialEpoch = this.message.getMonitoringInfo().get(0).getEpoch();
-				try (FileWriter writer = new FileWriter(csvOutputFile, true)) {
-					for (MonitoringInfo info : this.message.getMonitoringInfo()) {
-						writer.write(String.format("%s,%s,%s,%d,%d%n", info.getNodeName(), n.getNodeType().toString(),
-								deploymentMode, info.getEpoch(), info.getEpoch() - initialEpoch));
-					}
-				}
+			long initialEpoch = this.getMessage().getMonitoringInfo().get(0).getEpoch();
+			try (FileWriter writer = new FileWriter(csvOutputFile, true)) {
+				MonitoringInfo info = this.getMessage().getLastMonitoringInfo();
+				writer.write(String.format("%d,%s,%s,%s,%s,%d,%d%n", Instant.now().toEpochMilli(),
+						this.getMessage().getId(), info.getNodeName(), n.getNodeType().toString(), deploymentMode,
+						info.getEpoch(), info.getEpoch() - initialEpoch));
 
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		delegate.handleStubMessage();

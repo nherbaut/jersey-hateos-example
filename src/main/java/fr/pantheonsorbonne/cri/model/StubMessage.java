@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 @JsonIgnoreProperties
-@XmlSeeAlso({LinkedHashMap.class})
+@XmlSeeAlso({ LinkedHashMap.class })
 public class StubMessage {
 
 	public boolean isDirected() {
@@ -56,6 +56,17 @@ public class StubMessage {
 		this.nodes = nodes;
 	}
 
+	@XmlElement(required = false)
+	private String id;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	private boolean directed;
 	private boolean multigraph;
 	private Set<Link> links = new HashSet<>();
@@ -77,6 +88,10 @@ public class StubMessage {
 
 	public List<MonitoringInfo> getMonitoringInfo() {
 		return monitoringInfo;
+	}
+	
+	public MonitoringInfo getLastMonitoringInfo() {
+		return this.monitoringInfo.get(this.monitoringInfo.size()-1);
 	}
 
 	public void setMonitoringInfo(List<MonitoringInfo> monitoringInfo) {

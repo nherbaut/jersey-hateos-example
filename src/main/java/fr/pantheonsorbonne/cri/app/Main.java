@@ -5,6 +5,8 @@ import java.net.URI;
 import java.util.Scanner;
 
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.NetworkListener;
+import org.glassfish.grizzly.threadpool.ThreadPoolConfig;
 import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.utilities.Binder;
 import org.glassfish.hk2.utilities.BuilderHelper;
@@ -61,7 +63,18 @@ public class Main {
 				.register(DeclarativeLinkingFeature.class)//
 				.register(ExceptionMapper.class);
 
-		return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
+		HttpServer res = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
+
+		// create the thread pool configuration
+		ThreadPoolConfig config = ThreadPoolConfig.defaultConfig().setPoolName("mypool").setCorePoolSize(300)
+				.setMaxPoolSize(300);
+
+		// assign the thread pool
+		NetworkListener listener = res.getListeners().iterator().next();
+		listener.getTransport().setWorkerThreadPoolConfig(config);
+
+		return res;
+
 	}
 
 	/**

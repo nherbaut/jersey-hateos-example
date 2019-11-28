@@ -17,6 +17,8 @@ import javax.xml.bind.JAXBException;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 
+import com.google.common.base.Strings;
+
 import fr.pantheonsorbonne.cri.endpoints.JMSEndoint;
 import fr.pantheonsorbonne.cri.model.ClusterConfig;
 import fr.pantheonsorbonne.cri.model.StubMessage;
@@ -25,6 +27,9 @@ public abstract class JMSUtils {// fake JNDI context to create object
 
 	private static Map<String, ActiveMQConnectionFactory> connectionFactoryMap = new HashMap<String, ActiveMQConnectionFactory>();
 	private static JAXBContext jaxbContext;
+	private static String brokerUser;
+	private static String brokerPWD;
+	private static final String DEFAULT_BROKER_CREDENTIAL = "nicolas";
 
 	public static JAXBContext getJaxbContext() {
 		return jaxbContext;
@@ -33,6 +38,15 @@ public abstract class JMSUtils {// fake JNDI context to create object
 	static {
 		try {
 			jaxbContext = JAXBContext.newInstance(StubMessage.class);
+			brokerUser = System.getenv("ARTEMIS_USERNAME");
+			if (Strings.isNullOrEmpty(brokerUser)) {
+				brokerUser = DEFAULT_BROKER_CREDENTIAL;
+			}
+			brokerPWD = System.getenv("ARTEMIS_PASSWORD");
+			if (Strings.isNullOrEmpty(brokerPWD)) {
+				brokerPWD = DEFAULT_BROKER_CREDENTIAL;
+			}
+
 		} catch (JAXBException e) {
 			throw new RuntimeException(e);
 		}
@@ -50,7 +64,7 @@ public abstract class JMSUtils {// fake JNDI context to create object
 	}
 
 	public static synchronized void sendTextMessage(final String queueId, final String nodeId, final String message) {
-		try (Connection connection = connectionFactoryMap.get(queueId).createConnection("nicolas", "nicolas")) {
+		try (Connection connection = connectionFactoryMap.get(queueId).createConnection(brokerUser, brokerPWD)) {
 			try (Session session = connection.createSession()) {
 				try (MessageProducer producer = session.createProducer(new ActiveMQQueue(queueId))) {
 					Message textMessage = session.createTextMessage(message);
@@ -76,7 +90,7 @@ public abstract class JMSUtils {// fake JNDI context to create object
 
 			@Override
 			public void run() {
-				try (Connection con = connectionFactory.createConnection("nicolas", "nicolas")) {
+				try (Connection con = connectionFactory.createConnection(brokerUser, brokerPWD)) {
 					con.start();
 					try (Session session = con.createSession()) {
 						try (MessageConsumer consumer = session.createConsumer(queue)) {
